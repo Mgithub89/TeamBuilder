@@ -10,6 +10,136 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const employees = [];
+
+const managerPromptQ = () => inquirer.prompt([
+    {
+        type: "input",
+        name: "managerName",
+        message: "What is your manager name?"
+    },
+    {
+        type: "input",
+        name: "managerId",
+        message: "What is your manager id?"
+    },
+    {
+        type: "input",
+        name: "managerEmail",
+        message: "What is your manager Email?"
+    },
+    {
+        type: "input",
+        name: "managerOfficeNumber",
+        message: "What is your manager office number?"
+    }
+
+])
+
+
+const addTeam = () =>
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "teamMemberChoice",
+                message: "pls choose a team member you like to add",
+                choices: [
+                    "Engineer",
+                    "Intern",
+                    "I don't want to add any more team member"
+                ]
+            }
+        ]).then(response => {
+            switch (response.teamMemberChoice) {
+                case "Engineer":
+                    addEngineer();
+                    break;
+                case "Intern":
+                    addIntern();
+                    break;
+                default:
+                    Team();
+                    console.log("Thankyou");
+            }
+        })
+
+const addEngineer = () => inquirer.prompt([
+    {
+        type: "input",
+        name: "engineerName",
+        message: "What is your engineer name?"
+    },
+    {
+        type: "input",
+        name: "engineerId",
+        message: "What is your engineer id?"
+    },
+    {
+        type: "input",
+        name: "engineerEmail",
+        message: "What is your engineer email?"
+    },
+    {
+        type: "input",
+        name: "engineerGithub",
+        message: "What is your engineer Github username?"
+    }
+]).then(response => {
+    const engineer = new Engineer(response.engineerName, response.engineerId, response.engineerEmail, response.engineerGithub)
+    employees.push(engineer);
+    addTeam();
+})
+
+const addIntern = () => inquirer.prompt([
+    {
+        type: "input",
+        name: "internName",
+        message: "What is your intern's name?",
+    },
+    {
+        type: "input",
+        name: "internId",
+        message: "What is your intern's id?",
+    },
+    {
+        type: "input",
+        name: "internEmail",
+        message: "What is your intern's email?",
+    },
+    {
+        type: "input",
+        name: "internSchool",
+        message: "What is your intern's school?",
+    }
+]).then(response => {
+    const intern = new Intern(response.internName, response.internId, response.internEmail, response.internSchool)
+    employees.push(intern);
+    addTeam();
+})
+const startQ = async () => {
+    try {
+        await managerPromptQ();
+        await addTeam();
+    } catch (e) {
+        console.log(e);
+    }
+}
+startQ();
+
+// render(employees);
+
+const Team = () => {
+    fs.writeFile(outputPath, render(employees), function (err) {
+
+        if (err) {
+            console.log(err);
+        }
+
+        console.log("Success!");
+
+    });
+};
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
