@@ -11,6 +11,26 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 const employees = [];
+const idArr = [];
+//to validate email .
+function Emailvalidation(email) {
+    valid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
+    if (valid) {
+        return true;
+    } else {
+        console.log(".  Pls provide a valid email")
+        return false;
+    }
+}
+
+//to check id is not matching 
+const idChecker = id => {
+    if (idArr.includes(id)) {
+        console.log("  id taken. please enter another id");
+        return false
+    }
+    return true
+}
 
 const managerPromptQ = () => inquirer.prompt([
     {
@@ -21,12 +41,14 @@ const managerPromptQ = () => inquirer.prompt([
     {
         type: "input",
         name: "managerId",
-        message: "What is your manager id?"
+        message: "What is your manager id?",
+        validate: idChecker
     },
     {
         type: "input",
         name: "managerEmail",
-        message: "What is your manager Email?"
+        message: "What is your manager Email?",
+        validate: Emailvalidation
     },
     {
         type: "input",
@@ -34,8 +56,11 @@ const managerPromptQ = () => inquirer.prompt([
         message: "What is your manager office number?"
     }
 
-])
-
+]).then(response => {
+    const manager = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeNumber)
+    employees.push(manager);
+    idArr.push(response.managerId);
+});
 
 const addTeam = () =>
     inquirer
@@ -72,13 +97,15 @@ const addEngineer = () => inquirer.prompt([
     },
     {
         type: "input",
-        name: "engineerId",
-        message: "What is your engineer id?"
+        name: "id",
+        message: "What is your engineer id?",
+        validate: idChecker
     },
     {
         type: "input",
         name: "engineerEmail",
-        message: "What is your engineer email?"
+        message: "What is your engineer email?",
+        validate: Emailvalidation
     },
     {
         type: "input",
@@ -86,8 +113,9 @@ const addEngineer = () => inquirer.prompt([
         message: "What is your engineer Github username?"
     }
 ]).then(response => {
-    const engineer = new Engineer(response.engineerName, response.engineerId, response.engineerEmail, response.engineerGithub)
+    const engineer = new Engineer(response.engineerName, response.id, response.engineerEmail, response.engineerGithub)
     employees.push(engineer);
+    idArr.push(response.id);
     addTeam();
 })
 
@@ -99,13 +127,15 @@ const addIntern = () => inquirer.prompt([
     },
     {
         type: "input",
-        name: "internId",
+        name: "id",
         message: "What is your intern's id?",
+        validate: idChecker
     },
     {
         type: "input",
         name: "internEmail",
         message: "What is your intern's email?",
+        validate: Emailvalidation
     },
     {
         type: "input",
@@ -113,13 +143,15 @@ const addIntern = () => inquirer.prompt([
         message: "What is your intern's school?",
     }
 ]).then(response => {
-    const intern = new Intern(response.internName, response.internId, response.internEmail, response.internSchool)
+    const intern = new Intern(response.internName, response.id, response.internEmail, response.internSchool)
     employees.push(intern);
+    idArr.push(response.id);
     addTeam();
 })
 const startQ = async () => {
     try {
         await managerPromptQ();
+
         await addTeam();
     } catch (e) {
         console.log(e);
@@ -130,6 +162,10 @@ startQ();
 // render(employees);
 
 const Team = () => {
+    // Create the output directory if the output path doesn't exist
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR)
+    }
     fs.writeFile(outputPath, render(employees), function (err) {
 
         if (err) {
