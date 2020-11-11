@@ -62,6 +62,7 @@ const managerPromptQ = () => inquirer.prompt([
     }
 
 ]).then(response => {
+    // creat a new manager from the response
     const manager = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeNumber)
     employees.push(manager);
     idArr.push(response.managerId);

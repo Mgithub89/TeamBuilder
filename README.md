@@ -27,7 +27,7 @@ choses i dont want to add any more team member the app closes and generate an HT
 * Add as many as you want
 * When you choose i dont want to add any more html file(team.html) will be created in the output folder that contains all the provided info.
 * Open team.html file in the browser.
-* [A walkthrough video](https://drive.google.com/file/d/1YlF9o-d_1Gi92EQF8RIgrwzFARy5ZeNr/view) 
+* [A walkthrough video](https://drive.google.com/file/d/1SF7YSCp4t1G-cmr-s0Y0SBdeYXNNuvbF/view) 
 
 * snap shot
 
